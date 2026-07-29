@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  TEACHER
+  STUDENT
+}
+
+enum StudentType {
+  REGULAR
+  GUEST
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  INACTIVE
+}
+
+enum TeacherStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum StudentStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+model User {
+
+  id Int @id @default(autoincrement())
+
+  email String @unique
+
+  passwordHash String?
+
+  role UserRole
+
+  status UserStatus @default(PENDING)
+
+  firstName String
+
+  lastName String
+
+  phone String?
+
+  avatarUrl String?
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  student Student?
+
+  teacher Teacher?
+}
+
+model Student {
+
+  id Int @id @default(autoincrement())
+
+  userId Int? @unique
+
+  type StudentType
+
+  planId Int
+
+  notes String?
+
+  status StudentStatus @default(ACTIVE)
+
+  user User? @relation(fields: [userId], references: [id])
+
+  plan Plan @relation(fields: [planId], references: [id])
+
+}
+
+model Teacher {
+
+  id Int @id @default(autoincrement())
+
+  userId Int? @unique
+
+  color String?
+
+  status TeacherStatus @default(ACTIVE)
+
+  user User? @relation(fields: [userId], references: [id])
+
+}
+
+model Plan {
+
+  id Int @id @default(autoincrement())
+
+  name String
+
+  classesPerMonth Int
+
+  price Decimal @db.Decimal(10,2)
+
+  active Boolean @default(true)
+
+  students Student[]
+}
