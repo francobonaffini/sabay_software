@@ -1,3 +1,4 @@
+import { activateStudentUseCase } from "../application/use-cases/activateStudent.usecase.js";
 import { changeStudentPlanUseCase } from "../application/use-cases/changeStudentPlan.usecase.js";
 import { createStudentUseCase } from "../application/use-cases/createStudent.usecase.js";
 import { deactivateStudentUseCase } from "../application/use-cases/deactivateStudent.usecase.js";
@@ -18,6 +19,7 @@ import { buildStudentRouter } from "./student.routes.js";
  *   updateStudent?: Function,
  *   changeStudentPlan?: Function,
  *   suspendStudent?: Function,
+ *   activateStudent?: Function,
  *   deactivateStudent?: Function,
  * }} [deps]
  */
@@ -29,6 +31,7 @@ const buildStudentModule = ({
     updateStudent,
     changeStudentPlan,
     suspendStudent,
+    activateStudent,
     deactivateStudent,
 } = {}) => {
     const deps = { studentRepository };
@@ -40,6 +43,7 @@ const buildStudentModule = ({
         updateStudent: updateStudent ?? updateStudentUseCase(deps),
         changeStudentPlan: changeStudentPlan ?? changeStudentPlanUseCase(deps),
         suspendStudent: suspendStudent ?? suspendStudentUseCase(deps),
+        activateStudent: activateStudent ?? activateStudentUseCase(deps),
         deactivateStudent: deactivateStudent ?? deactivateStudentUseCase(deps),
     });
 

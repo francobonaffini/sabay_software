@@ -16,6 +16,7 @@ import {
  *   updateStudent: Function,
  *   changeStudentPlan: Function,
  *   suspendStudent: Function,
+ *   activateStudent: Function,
  *   deactivateStudent: Function,
  * }} deps
  */
@@ -26,6 +27,7 @@ const buildStudentController = ({
     updateStudent,
     changeStudentPlan,
     suspendStudent,
+    activateStudent,
     deactivateStudent,
 }) => {
     return {
@@ -85,6 +87,16 @@ const buildStudentController = ({
             try {
                 const { id } = mapStudentIdParam(req.params);
                 const student = await suspendStudent({ id });
+                return res.status(200).json(toStudentResponseDTO(student));
+            } catch (error) {
+                return next(error);
+            }
+        },
+
+        activate: async (req, res, next) => {
+            try {
+                const { id } = mapStudentIdParam(req.params);
+                const student = await activateStudent({ id });
                 return res.status(200).json(toStudentResponseDTO(student));
             } catch (error) {
                 return next(error);

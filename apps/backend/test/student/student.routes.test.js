@@ -28,6 +28,7 @@ describe("buildStudentRouter", () => {
             update: track("update"),
             changePlan: track("changePlan"),
             suspend: track("suspend"),
+            activate: track("activate"),
             deactivate: track("deactivate"),
         });
 
@@ -37,6 +38,7 @@ describe("buildStudentRouter", () => {
         await request(app).patch("/students/1").send({}).expect(200);
         await request(app).patch("/students/1/plan").send({}).expect(200);
         await request(app).patch("/students/1/suspend").expect(200);
+        await request(app).patch("/students/1/activate").expect(200);
         await request(app).patch("/students/1/deactivate").expect(200);
 
         assert.deepEqual(hits, [
@@ -46,6 +48,7 @@ describe("buildStudentRouter", () => {
             "PATCH update",
             "PATCH changePlan",
             "PATCH suspend",
+            "PATCH activate",
             "PATCH deactivate",
         ]);
     });
@@ -58,6 +61,7 @@ describe("buildStudentRouter", () => {
             update: (_req, res) => res.status(200).end(),
             changePlan: (_req, res) => res.status(200).end(),
             suspend: (_req, res) => res.status(200).end(),
+            activate: (_req, res) => res.status(200).end(),
             deactivate: (_req, res) => res.status(200).end(),
         });
 

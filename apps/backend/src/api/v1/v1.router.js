@@ -1,5 +1,6 @@
 import express from "express";
 import { buildAuthModule } from "../../modules/auth/interfaces/auth.module.js";
+import { buildPlanModule } from "../../modules/plan/interfaces/http/plan.module.js";
 import { buildStudentModule } from "../../modules/student/interfaces/student.module.js";
 
 /**
@@ -8,16 +9,18 @@ import { buildStudentModule } from "../../modules/student/interfaces/student.mod
  * @param {{
  *   authModule?: { basePath: string, router: import("express").Router },
  *   studentModule?: { basePath: string, router: import("express").Router },
+ *   planModule?: { basePath: string, router: import("express").Router },
  * }} [deps]
  * @returns {import("express").Router}
  */
 const buildV1Router = ({
     authModule = buildAuthModule(),
     studentModule = buildStudentModule(),
+    planModule = buildPlanModule(),
 } = {}) => {
     const router = express.Router();
 
-    const modules = [authModule, studentModule];
+    const modules = [authModule, studentModule, planModule];
 
     modules.forEach(({ basePath, router: moduleRouter }) => {
         router.use(basePath, moduleRouter);

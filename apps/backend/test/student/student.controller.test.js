@@ -32,6 +32,7 @@ describe("buildStudentController", () => {
             updateStudent: mock.fn(),
             changeStudentPlan: mock.fn(),
             suspendStudent: mock.fn(),
+            activateStudent: mock.fn(),
             deactivateStudent: mock.fn(),
         });
         const res = createMockRes();
@@ -76,6 +77,7 @@ describe("buildStudentController", () => {
             updateStudent: mock.fn(),
             changeStudentPlan: mock.fn(),
             suspendStudent: mock.fn(),
+            activateStudent: mock.fn(),
             deactivateStudent: mock.fn(),
         });
         const res = createMockRes();
@@ -96,6 +98,7 @@ describe("buildStudentController", () => {
             updateStudent: mock.fn(),
             changeStudentPlan: mock.fn(),
             suspendStudent: mock.fn(),
+            activateStudent: mock.fn(),
             deactivateStudent: mock.fn(),
         });
         const res = createMockRes();
@@ -115,11 +118,14 @@ describe("buildStudentController", () => {
         });
     });
 
-    it("update / changePlan / suspend / deactivate responden 200", async () => {
+    it("update / changePlan / suspend / activate / deactivate responden 200", async () => {
         const student = buildStudent({ status: "SUSPENDED" });
         const updateStudent = mock.fn(async () => student);
         const changeStudentPlan = mock.fn(async () => student);
         const suspendStudent = mock.fn(async () => student);
+        const activateStudent = mock.fn(async () =>
+            buildStudent({ status: "ACTIVE" })
+        );
         const deactivateStudent = mock.fn(async () => student);
         const controller = buildStudentController({
             createStudent: mock.fn(),
@@ -128,6 +134,7 @@ describe("buildStudentController", () => {
             updateStudent,
             changeStudentPlan,
             suspendStudent,
+            activateStudent,
             deactivateStudent,
         });
         const next = mock.fn();
@@ -155,6 +162,11 @@ describe("buildStudentController", () => {
         await controller.suspend({ params: { id: "1" } }, suspendRes, next);
         assert.equal(suspendRes.statusCode, 200);
 
+        const activateRes = createMockRes();
+        await controller.activate({ params: { id: "1" } }, activateRes, next);
+        assert.equal(activateRes.statusCode, 200);
+        assert.equal(activateRes.body.status, "ACTIVE");
+
         const deactivateRes = createMockRes();
         await controller.deactivate(
             { params: { id: "1" } },
@@ -179,6 +191,7 @@ describe("buildStudentController", () => {
             updateStudent: mock.fn(),
             changeStudentPlan: mock.fn(),
             suspendStudent: mock.fn(),
+            activateStudent: mock.fn(),
             deactivateStudent: mock.fn(),
         });
         const res = createMockRes();

@@ -154,6 +154,32 @@ describe("Student HTTP — /api/v1/students", () => {
         );
     });
 
+    it("PATCH /students/:id/activate — 200 / 409", async () => {
+        const activateStudent = mock.fn(async ({ id }) => {
+            if (id === 2) {
+                throw new AppError("El alumno ya está activo.", {
+                    code: ErrorCode.STUDENT_ALREADY_ACTIVE,
+                    httpStatus: 409,
+                });
+            }
+            return buildStudent({ id, status: "ACTIVE" });
+        });
+        const app = buildTestApp({ activateStudent });
+
+        const ok = await request(app)
+            .patch("/api/v1/students/1/activate")
+            .expect(200);
+        assert.equal(ok.body.status, "ACTIVE");
+
+        const conflict = await request(app)
+            .patch("/api/v1/students/2/activate")
+            .expect(409);
+        assert.equal(
+            conflict.body.error.code,
+            ErrorCode.STUDENT_ALREADY_ACTIVE
+        );
+    });
+
     it("PATCH /students/:id/deactivate — 200", async () => {
         const deactivateStudent = mock.fn(async () =>
             buildStudent({ status: "INACTIVE" })
