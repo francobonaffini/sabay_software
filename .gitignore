@@ -24,3 +24,6 @@ build/
 # IDE
 .vscode/
 .idea/
+
+# Eliminar la carpeta media/ del control de versiones (no estará en GitHub)
+media/

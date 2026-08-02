@@ -14,6 +14,7 @@ const mapCreateStudentRequest = (body = {}) => ({
 /**
  * PATCH /students/:id → input del updateStudentUseCase
  * type (REGULAR/GUEST) se cambia por este endpoint.
+ * planId NO se maneja aquí: usar PATCH /students/:id/plan
  */
 const mapUpdateStudentRequest = (body = {}) => {
     const input = {};
@@ -31,7 +32,7 @@ const mapUpdateStudentRequest = (body = {}) => {
 };
 
 /**
- * PATCH /students/:id/plan
+ * PATCH /students/:id/plan → input del changeStudentPlanUseCase
  */
 const mapChangePlanRequest = (body = {}) => ({
     planId: body.planId !== undefined ? Number(body.planId) : undefined,
@@ -80,6 +81,7 @@ const toStudentResponseDTO = (student) => ({
               phone: student.user.phone,
               role: student.user.role,
               status: student.user.status,
+              avatarUrl: student.user.avatarUrl,
           }
         : null,
 });

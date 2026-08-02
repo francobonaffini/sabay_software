@@ -17,7 +17,7 @@ const buildStudentUser = (overrides = {}) => ({
     phone: "111222333",
     role: "STUDENT",
     status: "PENDING",
-    avatarUrl: null,
+    avatarUrl: "/media/avatars/default.webp",
     createdAt: new Date("2026-01-01T00:00:00.000Z"),
     updatedAt: new Date("2026-01-01T00:00:00.000Z"),
     ...overrides,

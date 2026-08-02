@@ -68,6 +68,18 @@ describe("student.dto", () => {
                 notes: null,
             });
         });
+
+        it("ignora planId (el cambio de plan va por /:id/plan)", () => {
+            assert.deepEqual(
+                mapUpdateStudentRequest({
+                    firstName: "Ana",
+                    planId: 99,
+                }),
+                {
+                    firstName: "Ana",
+                }
+            );
+        });
     });
 
     describe("mapChangePlanRequest / mapListStudentsQuery / mapStudentIdParam", () => {
@@ -86,7 +98,7 @@ describe("student.dto", () => {
     });
 
     describe("toStudentResponseDTO", () => {
-        it("expone student + user + plan sin campos internos de user", () => {
+        it("expone student + user + plan con avatarUrl y sin passwordHash", () => {
             const student = buildStudent({
                 plan: {
                     id: 1,
@@ -109,8 +121,9 @@ describe("student.dto", () => {
                 phone: student.user.phone,
                 role: student.user.role,
                 status: student.user.status,
+                avatarUrl: student.user.avatarUrl,
             });
-            assert.equal("avatarUrl" in dto.user, false);
+            assert.equal(dto.user.avatarUrl, "/media/avatars/default.webp");
             assert.equal("passwordHash" in dto.user, false);
         });
 

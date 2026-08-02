@@ -81,4 +81,19 @@ describe("changeStudentPlanUseCase", () => {
             (error) => error.code === ErrorCode.VALIDATION_ERROR
         );
     });
+
+    it("lanza STUDENT_NOT_FOUND si el alumno no existe", async () => {
+        const changePlan = changeStudentPlanUseCase({
+            studentRepository: buildStudentRepositoryMock({
+                findById: mock.fn(async () => null),
+            }),
+        });
+
+        await assert.rejects(
+            () => changePlan({ id: 99, planId: 2 }),
+            (error) =>
+                error.code === ErrorCode.STUDENT_NOT_FOUND &&
+                error.httpStatus === 404
+        );
+    });
 });

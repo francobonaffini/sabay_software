@@ -1,5 +1,7 @@
 import { prisma } from "../../../../shared/infrastructure/db/prismaClient.js";
 
+const DEFAULT_AVATAR_URL = "/media/avatars/default.webp";
+
 const studentInclude = {
     user: {
         select: {
@@ -100,6 +102,7 @@ const studentPrismaRepository = {
                     role: "STUDENT",
                     status: "PENDING",
                     passwordHash: null,
+                    avatarUrl: DEFAULT_AVATAR_URL,
                 },
             });
 

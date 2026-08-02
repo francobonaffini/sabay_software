@@ -35,6 +35,13 @@ enum StudentStatus {
   INACTIVE
 }
 
+enum GuestPassStatus {
+  AVAILABLE
+  RESERVED
+  USED
+  CANCELLED
+}
+
 model User {
 
   id Int @id @default(autoincrement())
@@ -82,6 +89,31 @@ model Student {
 
   plan Plan @relation(fields: [planId], references: [id])
 
+  guestPasses GuestPass[]
+
+}
+
+model GuestPass {
+
+  id Int @id @default(autoincrement())
+
+  studentId Int
+
+  // reservationId Int? @unique
+
+  status GuestPassStatus @default(AVAILABLE)
+
+  enabledAt DateTime @default(now())
+
+  expiresAt DateTime?
+
+  usedAt DateTime?
+
+  student Student @relation(fields: [studentId], references: [id])
+
+  // reservation Reservation? @relation(fields: [reservationId], references: [id])
+
+  @@index([studentId])
 }
 
 model Teacher {

@@ -112,7 +112,16 @@ describe("Student HTTP — /api/v1/students", () => {
 
     it("PATCH /students/:id/plan — 200 cambia plan", async () => {
         const changeStudentPlan = mock.fn(async () =>
-            buildStudent({ planId: 2 })
+            buildStudent({
+                planId: 2,
+                plan: {
+                    id: 2,
+                    name: "Pro",
+                    classesPerMonth: 12,
+                    price: "30000.00",
+                    active: true,
+                },
+            })
         );
         const app = buildTestApp({ changeStudentPlan });
 
@@ -122,10 +131,64 @@ describe("Student HTTP — /api/v1/students", () => {
             .expect(200);
 
         assert.equal(response.body.planId, 2);
+        assert.equal(response.body.plan.id, 2);
         assert.deepEqual(changeStudentPlan.mock.calls[0].arguments[0], {
             id: 1,
             planId: 2,
         });
+    });
+
+    it("PATCH /students/:id/plan — 404 plan no encontrado", async () => {
+        const changeStudentPlan = mock.fn(async () => {
+            throw new AppError("Plan no encontrado.", {
+                code: ErrorCode.PLAN_NOT_FOUND,
+                httpStatus: 404,
+            });
+        });
+        const app = buildTestApp({ changeStudentPlan });
+
+        const response = await request(app)
+            .patch("/api/v1/students/1/plan")
+            .send({ planId: 99 })
+            .expect(404);
+
+        assert.equal(response.body.error.code, ErrorCode.PLAN_NOT_FOUND);
+    });
+
+    it("PATCH /students/:id/plan — 400 plan inactivo", async () => {
+        const changeStudentPlan = mock.fn(async () => {
+            throw new AppError("El plan no está activo.", {
+                code: ErrorCode.PLAN_INACTIVE,
+                httpStatus: 400,
+            });
+        });
+        const app = buildTestApp({ changeStudentPlan });
+
+        const response = await request(app)
+            .patch("/api/v1/students/1/plan")
+            .send({ planId: 2 })
+            .expect(400);
+
+        assert.equal(response.body.error.code, ErrorCode.PLAN_INACTIVE);
+    });
+
+    it("PATCH /students/:id — no usa changeStudentPlan aunque envíe planId", async () => {
+        const updateStudent = mock.fn(async () =>
+            buildStudent({ planId: 1, firstName: "Ana" })
+        );
+        const changeStudentPlan = mock.fn(async () =>
+            buildStudent({ planId: 2 })
+        );
+        const app = buildTestApp({ updateStudent, changeStudentPlan });
+
+        await request(app)
+            .patch("/api/v1/students/1")
+            .send({ firstName: "Ana", planId: 2 })
+            .expect(200);
+
+        assert.equal(updateStudent.mock.callCount(), 1);
+        assert.equal(changeStudentPlan.mock.callCount(), 0);
+        assert.equal("planId" in updateStudent.mock.calls[0].arguments[0], false);
     });
 
     it("PATCH /students/:id/suspend — 200 / 409", async () => {
